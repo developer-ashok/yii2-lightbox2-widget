@@ -1,11 +1,11 @@
 <?php
 
 /**
- * @package yii2-extentions
+ * @package yii2-extensions
  * @license The MIT License
  * @copyright Copyright (C) 2012-2018 Sergio coderius <coderius>
- * @contacts sunrise4fun@gmail.com - Have suggestions, contact me :) 
- * @link https://github.com/coderius - My github
+ * @contacts sunrise4fun@gmail.com - Have suggestions, contact me :)
+ * @link https://github.com/coderius - My GitHub
  */
 namespace coderius\lightbox2;
 
@@ -15,20 +15,23 @@ use yii\helpers\Json;
 class Lightbox2 extends Widget
 {
     /**
-     * @var array the options for the lightbox2 JS plugin.
-     * @see https://lokeshdhakar.com/projects/lightbox2/ 
+     * @var string the URL to your custom Lightbox2 JavaScript file.
+     */
+    public $customJsUrl;
+
+    /**
+     * @var array the options for the Lightbox2 JS plugin.
      */
     public $clientOptions = [];
-    
+
     /**
      * @inheritdoc
      */
     public function init()
     {
         parent::init();
-        
-    } 
-    
+    }
+
     /**
      * @inheritdoc
      */
@@ -36,36 +39,33 @@ class Lightbox2 extends Widget
     {
         $plugin = $this->makePlugin('lightbox');
         $this->registerAssets($plugin);
-        
     }
-    
+
     /**
      * @param string $name
      * @return string
      */
     protected function makePlugin($name)
     {
-        $js = false;
-        
+        $js = '';
+
         if ($this->clientOptions !== false) {
             $options = empty($this->clientOptions) ? '' : Json::encode($this->clientOptions);
             $js = "$name.option($options);";
-            
         }
-            
+
         return $js;
     }
-    
+
     /**
      * @param string $plugin
      */
-    protected function registerAssets($plugin){
+    protected function registerAssets($plugin)
+    {
         $view = $this->getView();
-        $bundle = Lightbox2Asset::register($view);
+        if ($this->customJsUrl !== null) {
+            $view->registerJsFile($this->customJsUrl, ['depends' => Lightbox2Asset::class]);
+        }
         $view->registerJs($plugin);
     }
-    
-    
-    
-    
 }
